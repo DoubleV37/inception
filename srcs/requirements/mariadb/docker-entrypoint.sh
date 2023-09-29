@@ -1,19 +1,15 @@
 #!/bin/sh
 
-# Démarrer le serveur MariaDB
-mysqld --user=mysql &
+if [ ! -d /var/lib/mysql/$MYSQL_DATABASE ]; then
+    mysql_install_db --user=root --datadir=/var/lib/mysql
+    {
+        echo "FLUSH PRIVILEGES;"
+        echo "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;"
+        echo "USE $MYSQL_DATABASE;"
+        echo "CREATE USER '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';"
+        echo "GRANT ALL ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%';"
+        echo "FLUSH PRIVILEGES;"
+    } | mysqld --bootstrap --user=root
+fi
 
-# Attendre que le serveur MariaDB démarre complètement
-while ! mysqladmin ping -hlocalhost --silent; do
-    sleep 1
-done
-
-# Exécutez le script SQL d'initialisation
-mysql_install_db
-mysql -u root -p"$MYSQL_ROOT_PASSWORD" < /docker-entrypoint-initdb.d/init-db.sql
-
-# Arrêtez MariaDB proprement
-mysqladmin -u root -p"$MYSQL_ROOT_PASSWORD" shutdown
-
-# Démarrer MariaDB normalement
-exec mysqld_safe --user=mysql --socket= --port=3306
+exec mysqld_safe --user=root --port=3306
