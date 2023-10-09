@@ -1,19 +1,27 @@
 #!/bin/sh
 
-if [ ! -f /var/www/html/wp-config.php ]; then
-	wp-cli.phar core download --allow-root
-	wp-cli.phar config create --dbname=$MYSQL_DATABASE --dbuser=$MYSQL_USER --dbpass=$MYSQL_PASSWORD --dbhost=mariadb
-	wp-cli.phar core install --url=vviovi.42.fr --title=Example --admin_user=supervisor --admin_password=strongpassword --admin_email=valentin.v3719@gmail.com
-fi
-
 if ! getent group www >/dev/null 2>&1; then
     addgroup -S www
 fi
 
 if ! getent passwd www >/dev/null 2>&1; then
-    adduser -S -D -H -G www www
+    adduser -SDHG www www
 fi
 
-chown -R www:www /var/www/html
+if [ ! -f /var/www/html/wp-config.php ]; then
+	wp-cli.phar core download --path=/var/www/html
+	sleep 5
+	wp-cli.phar config create --path=/var/www/html --dbname=$MYSQL_DATABASE --dbuser=$MYSQL_USER --dbpass=$MYSQL_PASSWORD --dbhost=$MYSQL_HOST --skip-check
+fi
 
-exec "php-fpm81" "-FOR"
+wp-cli.phar config set --path=/var/www/html WP_SITEURL $WORDPRESS_URL
+
+if ! wp-cli.phar core is-installed --path=/var/www/html --allow-root; then
+	wp-cli.phar core install --path=/var/www/html --url=$WORDPRESS_URL --title=Example --admin_user=$WORDPRESS_ADMIN --admin_password=$WORDPRESS_ADMIN_PASSWORD --admin_email=$WORDPRESS_ADMIN_EMAIL --skip-email
+fi
+
+chown -R www:www /var/www
+
+chmod 777 /var/www
+
+exec php-fpm81 -FOR

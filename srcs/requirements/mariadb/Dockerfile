@@ -4,8 +4,7 @@ RUN apk update && apk upgrade && apk add mariadb mariadb-client mariadb-server-u
 
 RUN mkdir /docker-entrypoint-initdb.d
 
-COPY my.cnf /etc/my.cnf.d/
-COPY docker-entrypoint.sh /docker-entrypoint.sh
+COPY --chmod=777 docker-entrypoint.sh /docker-entrypoint.sh
 
 EXPOSE 3306
 
