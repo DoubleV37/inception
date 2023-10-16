@@ -35,6 +35,28 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "9000:9000"
+  redis:
+    restart: always
+    build: requirements/redis
+    networks:
+      - wordpressnet
+  adminer:
+    restart: always
+    build: requirements/adminer
+    networks:
+      - wordpressnet
+      - dbnet
+  ftp:
+    restart: always
+    build: requirements/ftp
+    networks:
+      - wordpressnet
+    volumes:
+      - v_nginx:/var/www/html
+    ports:
+      - "21:21"
+      - "21000-21010:21000-21010"
+    env_file: .env
 
 networks:
   dbnet:

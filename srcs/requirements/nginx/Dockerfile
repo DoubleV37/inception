@@ -1,4 +1,4 @@
-FROM alpine:3.18.2
+FROM alpine:3.17
 
 RUN apk update && apk upgrade && apk add nginx openssl
 
@@ -7,6 +7,8 @@ RUN openssl req -x509 -newkey rsa:4096 -keyout /private_key.key -out /certificat
 RUN addgroup -S www
 RUN adduser -S www -G www
 
+COPY --chown=www:www --chmod=777 staticpage.html /var/www/html/staticpage.html
+COPY --chown=www:www --chmod=777 img_sc.jpg /var/www/html/img_sc.jpg
 COPY --chown=www:www --chmod=777 nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 443

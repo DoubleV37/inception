@@ -1,6 +1,6 @@
-FROM alpine:3.18.2
+FROM alpine:3.17
 
-RUN apk update && apk upgrade && apk add php php-cli php-phar php-fpm curl php-curl php-mysqli mysql-client php-tokenizer php-mbstring php-zip
+RUN apk update && apk upgrade && apk add php81 php81-cli php81-phar php81-fpm curl php81-curl php81-mysqli mysql-client php81-tokenizer php81-mbstring php81-zip
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
     && chmod +x wp-cli.phar \
     && mv wp-cli.phar /usr/local/bin/
