@@ -6,6 +6,9 @@ up:
 down:
 	docker compose -f srcs/docker-compose.yml down
 
+stop:
+	docker compose -f srcs/docker-compose.yml stop
+
 fclean: down
 	docker system prune -af --volumes
 	sudo rm -rf ~/data/db/* ~/data/wordpress/*
@@ -13,10 +16,10 @@ fclean: down
 rmv:
 	sudo rm -rf ~/data/db/* ~/data/wordpress/*
 
-re: down up
+re: stop up
 
 fre: fclean up
 
 rve: rmv up
 
-.PHONY: up down fclean re fre all rve rmv
+.PHONY: up down fclean re fre all rve rmv stop

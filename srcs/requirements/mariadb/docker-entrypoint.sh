@@ -1,12 +1,13 @@
 #!/bin/sh
 
+if [ ! -d /run/mysqld ]; then
+	mkdir -p /run/mysqld
+	chown -R mysql:mysql /run/mysqld
+fi
+
+chown -R mysql:mysql /var/lib/mysql
+
 if [ ! -d /var/lib/mysql/$MYSQL_DATABASE ]; then
-
-	mkdir -p /run/mysql
-	chown -R mysql:mysql /run/mysql
-
-	chown -R mysql:mysql /var/lib/mysql
-
 	sed -i "s|.*bind-address\s*=.*|bind-address=0.0.0.0|g" /etc/mysql/my.cnf
 	sed -i "s|.*bind-address\s*=.*|bind-address=0.0.0.0|g" /etc/my.cnf.d/mariadb-server.cnf
 
@@ -23,4 +24,4 @@ if [ ! -d /var/lib/mysql/$MYSQL_DATABASE ]; then
     } | mysqld --bootstrap --user=mysql --datadir=/var/lib/mysql
 fi
 
-exec mysqld_safe --user=mysql --port=3306 --datadir=/var/lib/mysql --socket=
+mysqld_safe --user=mysql --port=3306 --datadir=/var/lib/mysql --socket=
