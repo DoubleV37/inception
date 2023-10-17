@@ -8,10 +8,11 @@ fi
 chown -R mysql:mysql /var/lib/mysql
 
 if [ ! -d /var/lib/mysql/$MYSQL_DATABASE ]; then
-	sed -i "s|.*bind-address\s*=.*|bind-address=0.0.0.0|g" /etc/mysql/my.cnf
+
+	sed -i "s|.*bind-address\s*=.*|bind-address=0.0.0.0|g" /etc/my.cnf
 	sed -i "s|.*bind-address\s*=.*|bind-address=0.0.0.0|g" /etc/my.cnf.d/mariadb-server.cnf
 
-	sed -i "s|.*skip-networking.*|skip-networking=OFF|g" /etc/mysql/my.cnf
+	sed -i "s|.*skip-networking.*|skip-networking=OFF|g" /etc/my.cnf
 	sed -i "s|.*skip-networking.*|skip-networking=OFF|g" /etc/my.cnf.d/mariadb-server.cnf
 
     mysql_install_db --user=mysql --datadir=/var/lib/mysql --skip-test-db
